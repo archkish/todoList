@@ -61,6 +61,11 @@ export default {
 
 
   mounted() {
+
+    if(localStorage.doneTasks) {
+      this.doneTasks = JSON.parse(localStorage.doneTasks)
+    }
+
     if(localStorage.tasks) {
       this.tasks = JSON.parse(localStorage.tasks)
     }
@@ -72,6 +77,12 @@ export default {
         localStorage.tasks = JSON.stringify(newList)
       },
       deep: true
+    },
+    doneTasks: {
+      handler(nlist) {
+        localStorage.doneTasks = JSON.stringify(nlist)
+      },
+      deep: true,
     }
 },
 
