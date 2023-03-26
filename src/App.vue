@@ -108,7 +108,7 @@ export default {
       }
       else {
         const nocomplete = this.doneTasks.splice(index, 1);
-        this.tasks.push(...nocomplete);
+        this.tasks.unshift(...nocomplete);
       }
     }
   }, 
