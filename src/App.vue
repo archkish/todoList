@@ -7,11 +7,23 @@
     </form>
     <ul class="list">
       <li class="list__item" v-for="(task, index) in tasks" :key="index">
-        <input class="list__checkbox" type="checkbox" v-model="task.completed">
+        <input class="list__checkbox" type="checkbox" v-model="task.completed" v-on:change="doCheck(index, 'need')">
         <span class="list__task" :class="{ completed: task.completed }">{{ task.title }}</span>
         <button class="list__btn" @click="deleteTask(index)"></button>
       </li>
     </ul>
+
+    <hr class="devider">
+    <h2 class="tasks__title tasks__title_left">Done</h2>
+
+    <ul class="list" id="done">
+      <li class="list__item" v-for="(task, index) in doneTasks" :key="index">
+        <input class="list__checkbox" type="checkbox" checked v-on:change="doCheck(index, 'complete')" v-model="task.completed">
+        <span class="list__task" :class="{ completed: task.completed }">{{ task.title }}</span>
+        <button class="list__btn" @click="deleteDoneTask(index)"></button>
+      </li>
+    </ul>
+
   </div>
 
 </template>
@@ -42,7 +54,8 @@ export default {
           title: 'add tasks in localStorage',
           completed: false
         },
-      ]
+      ],
+      doneTasks: []
     }
   },
 
@@ -65,13 +78,28 @@ export default {
   methods: {
     addTask() {
       if (this.newTask.trim() !== '') {
-        this.tasks.push({title: this.newTask, completed: false});
+        this.tasks.unshift({title: this.newTask, completed: false});
+        // this.tasks.push({title: this.newTask, completed: false});
         this.newTask = '';
       }
     },
     deleteTask(index) {
       this.tasks.splice(index, 1);
     },
+    deleteDoneTask(index) {
+      this.doneTasks.splice(index, 1)
+    },
+
+    doCheck(index, type) {
+      if(type === 'need') {
+        const complete = this.tasks.splice(index, 1);
+        this.doneTasks.push(...complete)
+      }
+      else {
+        const nocomplete = this.doneTasks.splice(index, 1);
+        this.tasks.push(...nocomplete);
+      }
+    }
   }, 
 }
 </script>
