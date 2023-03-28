@@ -24,7 +24,7 @@
           @keyup.enter="editTask(task.title)"
           v-if="task.isEditing"
           v-model="editValue"
-        />
+        >
         <span
           else
           type="text"
