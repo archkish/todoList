@@ -36,14 +36,14 @@
           <div class="wrapper">
             <button
               class="list__btn"
-              v-if="check"
-              :class="{ check: check }"
+              v-if="this.check"
+              :class="{ check: this.check }"
               @click="editTask(task.title), doCheck(task)"
             ></button>
             <button
               else
               class="list__btn list__btn_correction"
-              :class="{ check: check, hide: check }"
+              :class="{ check: this.check, hide: this.check }"
               @click="changeEditing(task.title), doCheck(task)"
             ></button>
           </div>
@@ -55,7 +55,7 @@
             ></button>
             <button
               else
-              :class="{ hide: check }"
+              :class="{ hide: this.check }"
               class="list__btn"
               @click="deleteTask(index)"
             ></button>
