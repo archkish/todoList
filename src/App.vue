@@ -16,17 +16,17 @@
           class="list__checkbox"
           type="checkbox"
           v-model="task.completed"
-          v-on:change="checkTaskComplete(index, 'noCompleted')"
+          @change="checkTaskComplete(index, true)"
         />
         <input
           class="list__editing"
           type="text"
-          @keyup.enter="editTask(task.title), doCheck(task)"
+          @keyup.enter="saveEditedTask(task)"
           v-if="task.isEditing"
           v-model="editValue"
         />
         <span
-          else
+          v-else
           class="list__task"
           :class="{ completed: task.completed, isEditing: task.isEditing }"
         >
@@ -35,27 +35,24 @@
         <div class="wrapper__btn">
           <div class="wrapper">
             <button
-              class="list__btn"
-              v-if="this.check"
-              :class="{ check: this.check }"
-              @click="editTask(task.title), doCheck(task)"
+              class="list__btn check"
+              v-if="task.isEditing"
+              @click="saveEditedTask(task)"
             ></button>
             <button
-              else
+              v-else
               class="list__btn list__btn_correction"
-              :class="{ check: this.check, hide: this.check }"
-              @click="changeEditing(task.title), doCheck(task)"
+              @click="editTask(task)"
             ></button>
           </div>
           <div>
             <button
               class="list__btn list__btn_close"
-              v-if="this.check"
-              @click="changeEditing(task.title), doCheck(task)"
+              v-if="task.isEditing"
+              @click="closeEditing(task)"
             ></button>
             <button
-              else
-              :class="{ hide: this.check }"
+              v-else
               class="list__btn"
               @click="deleteTask(index)"
             ></button>
@@ -73,7 +70,7 @@
           class="list__checkbox"
           type="checkbox"
           checked
-          v-on:change="checkTaskComplete(index, 'complete')"
+          @change="checkTaskComplete(index, false)"
           v-model="task.completed"
         />
         <span class="list__show" :class="{ completed: task.completed }">{{
@@ -88,7 +85,6 @@
 </template>
 
 <script>
-// import { thisTypeAnnotation } from '@babel/types';
 
 export default {
   name: "App",
@@ -101,29 +97,29 @@ export default {
           title: "add styles by design",
           completed: false,
           isEditing: false,
-          check: false,
         },
         {
           title: "add sort by complete",
           completed: false,
           isEditing: false,
-          check: false,
         },
         {
           title: "watch video about start vue3 install",
           completed: false,
           isEditing: false,
-          check: false,
         },
         {
           title: "add tasks in localStorage",
           completed: false,
           isEditing: false,
-          check: false,
         },
       ],
       doneTasks: [],
     };
+  },
+
+  beforeUnmount() {
+    this.disableEditing();
   },
 
   mounted() {
@@ -134,6 +130,10 @@ export default {
     if (localStorage.tasks) {
       this.tasks = JSON.parse(localStorage.tasks);
     }
+
+    window.onbeforeunload = () => {
+      this.disableEditing();
+    };
   },
 
   watch: {
@@ -152,10 +152,6 @@ export default {
   },
 
   methods: {
-    doCheck() {
-      this.check = !this.check;
-    },
-
     addTask() {
       if (this.newTask.trim() !== "") {
         this.tasks.unshift({
@@ -168,6 +164,12 @@ export default {
       }
     },
 
+    disableEditing() {
+      this.tasks.forEach((item) => {
+        item.isEditing = false;
+      })
+    },
+
     deleteTask(index) {
       this.tasks.splice(index, 1);
     },
@@ -176,33 +178,29 @@ export default {
       this.doneTasks.splice(index, 1);
     },
 
-    changeEditing(taskText) {
-      this.editValue = taskText;
-      this.tasks = this.tasks.map((task) => {
-        if (task.title === taskText) {
-          task.isEditing = !task.isEditing;
-        }
-        return task;
-      });
+    editTask(task) {
+      this.disableEditing();
+      this.editValue = task.title;
+      task.isEditing = true;
     },
 
-    editTask(taskText) {
-      this.tasks = this.tasks.map((task) => {
-        if (task.title === taskText) {
-          task.isEditing = !task.isEditing;
-          task.title = this.editValue;
-        }
-        return task;
-      });
+    closeEditing(task) {
+      this.editValue = '';
+      task.isEditing = false;
     },
 
-    checkTaskComplete(index, type) {
-      if (type === "noCompleted") {
+    saveEditedTask(task) {
+      task.isEditing = false;
+      task.title = this.editValue;
+    },
+
+    checkTaskComplete(index, isCompleted) {
+      if (isCompleted) {
         const complete = this.tasks.splice(index, 1);
         this.doneTasks.push(...complete);
       } else {
         const noComplete = this.doneTasks.splice(index, 1);
-        this.tasks.unshift(...noComplete);
+        this.tasks.push(...noComplete);
       }
     },
   },

@@ -87,7 +87,7 @@
       width: 16px;
       height: 16px;
       border: 1px solid #5e5c5c;
-      background: url(./assets/checkmark2.png) center center no-repeat;
+      background: url(./assets/check.png) center center no-repeat;
       background-size: 0;
       transition: 0.2s;
       border-radius: 50%;
@@ -142,7 +142,7 @@
   }
 }
 .check {
-  background: url(./assets/checkmark2.png) center center/cover no-repeat;
+  background: url(./assets/check.png) center center/cover no-repeat;
   margin-right: 10px;
 }
 .devider {
