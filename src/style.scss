@@ -64,6 +64,8 @@
 .list {
   .wrapper__btn {
     margin-left: auto;
+    display: flex;
+    align-items:center;
   }
   margin-top: 15px;
   list-style-type: none;
@@ -131,9 +133,18 @@
       margin-right: 10px;
       // margin-right: auto;
     }
+    &_close {
+      width: 12px;
+      height: 12px;
+      font-size: 18px;
+      background: url(./assets/cross.png) center center/cover no-repeat;
+    }
   }
 }
-
+.check {
+  background: url(./assets/checkmark2.png) center center/cover no-repeat;
+  margin-right: 10px;
+}
 .devider {
   margin-top: 25px;
   border: none;
@@ -144,5 +155,9 @@
 }
 
 .isEditing {
+  display: none;
+}
+
+.hide {
   display: none;
 }
