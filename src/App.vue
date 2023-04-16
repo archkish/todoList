@@ -9,10 +9,10 @@
         <div class="modal__wrapper-btn">
           <button 
           class="form__btn form__btn_big"
-          @click="deleteTask(index)">yes</button>
+          @click="deleteTask()">yes</button>
           <button
            class="form__btn form__btn_big"
-           @click="closeTask(index)">no</button>
+           @click="closeTask()">no</button>
         </div>
       </div>
     </div>
@@ -26,64 +26,7 @@
       />
       <button class="form__btn">Add Task</button>
     </form>
-    <ul class="list">
-      <li class="list__item" v-for="(task, index) in chosenTasks" :key="index">
-        <input
-          class="list__checkbox"
-          type="checkbox"
-          v-model="task.completed"
-          @change="checkTaskComplete2(index, true)"
-        />
-        <input
-          class="list__editing"
-          type="text"
-          @keyup.enter="saveEditedTask(task)"
-          v-if="task.isEditing"
-          v-model="editValue"
-        />
-        <span
-          v-else
-          class="list__task"
-          :class="{ completed: task.completed, isEditing: task.isEditing }"
-        >
-          {{ task.title }}
-        </span>
-        <div class="wrapper__btn">
-          <div class="wrapper">
-            <button
-              class="list__btn check"
-              v-if="task.isEditing"
-              @click="saveEditedTask(task)"
-            ></button>
-            <button
-              v-else
-              class="list__btn list__btn-correction"
-              @click="editTask(task)"
-            ></button>
-          </div>
-          <div>
-            <button
-              class="list__btn list__btn-close"
-              v-if="task.isEditing"
-              @click="closeEditing(task)"
-            ></button>
-            <button
-              v-else
-              class="list__btn"
-              @click="active = !active"
-            ></button>
-          </div>
-          <button
-            class="list__btn list__btn-star star2"
-            @click="makeChosen(index, false)"
-          >
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32">
-            <path d="M32 12.408l-11.056-1.607-4.944-10.018-4.944 10.018-11.056 1.607 8 7.798-1.889 11.011 9.889-5.199 9.889 5.199-1.889-11.011 8-7.798z"></path>
-          </svg>
-          </button>
-        </div>
-      </li>
-    </ul>
+  
     <ul class="list">
       <li class="list__item" v-for="(task, index) in tasks" :key="index">
         <input
@@ -128,13 +71,17 @@
             <button
               v-else
               class="list__btn"
-              @click="active = !active"
+              @click="showConfirmModal(index)"
             ></button>
           </div>
           <button
             class="list__btn list__btn-star"
-            @click="makeChosen(index, true)"
-          ></button>
+            :class="{'list__btn-star__active': task.isFavourite}"
+            @click="setFavourite(index)"
+          ><svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 32 32">
+            <path d="M32 12.408l-11.056-1.607-4.944-10.018-4.944 10.018-11.056 1.607 8 7.798-1.889 11.011 9.889-5.199 9.889 5.199-1.889-11.011 8-7.798z"></path>
+          </svg>
+          </button>
         </div>
       </li>
     </ul>
@@ -174,26 +121,30 @@ export default {
           title: "add styles by design",
           completed: false,
           isEditing: false,
+          isFavourite: false,
         },
         {
           title: "add sort by complete",
           completed: false,
           isEditing: false,
+          isFavourite: false,
         },
         {
           title: "watch video about start vue3 install",
           completed: false,
           isEditing: false,
+          isFavourite: false,
         },
         {
           title: "add tasks in localStorage",
           completed: false,
           isEditing: false,
+          isFavourite: false,
         },
       ],
       doneTasks: [],
-      chosenTasks: [],
       active: false,
+      deletedTaskIndex: null,
     };
   },
 
@@ -208,10 +159,6 @@ export default {
     }
     if (localStorage.tasks) {
       this.tasks = JSON.parse(localStorage.tasks);
-    }
-
-    if (localStorage.chosenTasks) {
-      this.chosenTasks = JSON.parse(localStorage.chosenTasks);
     }
   
     window.onbeforeunload = () => {
@@ -232,21 +179,16 @@ export default {
       },
       deep: true,
     },
-    chosenTasks: {
-      handler(newChosenTasks) {
-        localStorage.chosenTasks = JSON.stringify(newChosenTasks)
-      },
-      deep: true,
-    }
   },
 
   methods: {
     addTask() {
       if (this.newTask.trim() !== "") {
-        this.tasks.unshift({
+        this.tasks.push({
           title: this.newTask,
           completed: false,
-          editing: false,
+          isEditing: false,
+          isFavourite: false,
         });
 
         this.newTask = "";
@@ -259,20 +201,23 @@ export default {
       });
     },
 
-    disableEditing2() {
-      this.chosenTasks.forEach((item) => {
-        item.isEditing = false;
-      });
+    setFavourite(index) {
+      const [task] = this.tasks.splice(index, 1);
+      task.isFavourite = !task.isFavourite;
+
+      if(task.isFavourite) {
+        this.tasks.unshift(task)
+      } else {
+        this.tasks.push(task);
+      }
     },
 
-    deleteTask(index) {
-      this.tasks.splice(index, 1)
-      this.active = !this.active
+    deleteTask() {
+      this.tasks.splice(this.deletedTaskIndex, 1);
+      this.active = !this.active;
+      this.deletedTaskIndex = null;
     },
 
-    deleteTask2(index) {
-      this.chosenTasks.splice(index, 1);
-    },
 
     closeTask() {
       this.active = !this.active
@@ -284,7 +229,6 @@ export default {
 
     editTask(task) {
       this.disableEditing();
-      this.disableEditing2();
       this.editValue = task.title;
       task.isEditing = true;
     },
@@ -294,15 +238,6 @@ export default {
       task.isEditing = false;
     },
 
-    makeChosen(index, isCompleted) {
-      if (isCompleted) {
-        const chose = this.tasks.splice(index, 1);
-        this.chosenTasks.unshift(...chose);
-      } else {
-        const noChose = this.chosenTasks.splice(index, 1);
-        this.tasks.unshift(...noChose);
-      }
-    },
 
     saveEditedTask(task) {
       task.isEditing = false;
@@ -319,10 +254,12 @@ export default {
       }
     },
 
-    checkTaskComplete2(index) {
-      const complete = this.chosenTasks.splice(index, 1);
-      this.doneTasks.push(...complete);
+
+    showConfirmModal(index) {
+      this.deletedTaskIndex = index;
+      this.active = !this.active;
     },
   },
+
 };
 </script>

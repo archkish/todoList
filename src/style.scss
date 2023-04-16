@@ -40,8 +40,8 @@
   background-color: rgba(0, 0, 0, 0.5);
   &__wrapper {
     position: relative;
-    max-width: 500px;
-    margin: 40px auto;
+    max-width: 450px;
+    margin: 50px auto;
     width: 50%;
     padding: 40px;
     background: rgba($color: #cecbcb, $alpha: 0.9);
@@ -78,7 +78,7 @@
   }
 }
 .form {
-  margin-top: 15px;
+  margin: 15px 0;
   width: 100%;
   &__input {
     width: 77%;
@@ -122,7 +122,6 @@
     display: flex;
     align-items:center;
   }
-  margin-top: 15px;
   list-style-type: none;
   font-size: 18px;
   line-height: 18px;
@@ -193,22 +192,23 @@
       background: url(./assets/cross.png) center center/cover no-repeat;
     }
     &-star {
-      background: url(./assets/star-empty.svg) center center/cover no-repeat;///
       width: 12px;
       height: 12px;
       margin-left: 10px;
+      background: none;
+      stroke: black;
+      fill: transparent;
+      &:hover {
+        transform: scale(1.2);
+      }
+      &__active {
+        fill: rgb(243, 148, 6);
+  
+      }
     }
   }
 }
-.star2 {
-  background: none;
-  fill: rgb(243, 148, 6);
-  stroke: black;
-  &:hover {
-    transform: scale(1.2);
-  }
-  
-}
+
 .check {
   background: url(./assets/check.png) center center/cover no-repeat;
   margin-right: 10px;
