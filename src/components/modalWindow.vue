@@ -1,8 +1,8 @@
 <template>
-    <div class="modal">
+    <div class="modal" v-show="active">
       <div class="modal__wrapper">
         <div class="modal__close"
-        @click="classToggle"
+        @click="closeTask"
         >&times;</div>
         <div class="modal__title">Delete this task?</div>
         <div class="modal__wrapper-btn">
@@ -24,14 +24,28 @@
             return {  
             }
         },
+        props: {
+            active: Boolean,
+            onClose: Function,
+     
+        },
         methods: {
+            close() {
+                this.onClose(false)
+            },
+
+
             deleteTask() {
                 this.$emit('deleteTask')
+                this.close()
             },
 
             closeTask() {
                 this.$emit('closeTask')
+                this.close()
+
             },
+
             classToggle() {
                 this.$emit('classToggle')
             },

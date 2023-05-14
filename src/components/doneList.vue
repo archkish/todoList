@@ -1,29 +1,50 @@
 <template>
-    <ul class="list" id="done">
-      <li class="list__item" v-for="(task, index) in doneTasks" :key="index">
-        <input
+  <div class="wrapper">
+    <input
           class="list__checkbox"
           type="checkbox"
           checked
-          @change="checkTaskComplete(index, false)"
-          v-model="task.completed"
+          @change="checkTaskComplete"
         />
-        <span class="list__show" :class="{ completed: task.completed }">{{
-          task.title
+        <span class="completed">{{
+          title
         }}</span>
         <div class="wrapper__btn">
-          <button class="list__btn" @click="deleteDoneTask(index)"></button>
+          <button class="list__btn" @click="deleteDoneTask"></button>
         </div>
-      </li>
-    </ul>
+  </div>
 </template>
 
 <script>
     export default {
-        
+      data() {
+        return {
+
+        }
+      },
+      props: {
+        doneTasks: Array,
+        title: String,
+        completed: Boolean,
+      },
+      methods: {
+        deleteDoneTask() {
+          this.$emit('deleteDoneTask')
+        },
+        checkTaskComplete() {
+          this.$emit('checkTaskComplete')
+        },
+      }
     }
+
 </script>
 
 <style lang="scss" scoped>
-
+  .wrapper {
+    display: flex;
+    width: 100%;
+  }
+  .completed {
+    text-decoration: line-through;
+  }
 </style>
