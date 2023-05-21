@@ -21,21 +21,19 @@
 
     <section>
       <ul class="list">
-      <li class="list__item" v-for="(task, index) in tasks" :key="index">
+      <li class="list__item" v-for="task in tasks" :key="task.id">
         <list-task
-          @setFavourite="setFavourite(index)"
-          @showConfirmModal="showConfirmModal(index)"
+          @setFavourite="setFavourite(task)"
+          @showConfirmModal="showConfirmModal(task.id)"
           @editTask="editTask(task)"
           @closeEditing="closeEditing(task)"
           @saveEditedTask="saveEditedTask(task)"
-          @checkTaskComplete="checkTaskComplete(index, true)"
+          @checkTaskComplete="checkTaskComplete(task.id, true)"
           @noteValueChange="editValue = $event"
 
+          :task="task"
           :noteValue="editValue"
-          :title="task.title"
-          :completed="task.completed"
-          :isEditing="task.isEditing"
-          :isFavourite="task.isFavourite"        
+        
         />
       </li>
     </ul>
@@ -46,13 +44,13 @@
 
     <section>
       <ul class="list" id="done">
-      <li class="list__item" v-for="(task, index) in doneTasks" :key="index">
+      <li class="list__item" v-for="task in doneTasks" :key="task.id">
         <done-list
         :doneTasks="doneTasks"
         :title="task.title"
         :completed="task.completed"
-        @deleteDoneTask="deleteDoneTask"
-        @checkTaskComplete="checkTaskComplete"/>
+        @deleteDoneTask="deleteDoneTask(task.id)"
+        @checkTaskComplete="checkTaskComplete(task.id, false)"/>
       </li>
     </ul>
   </section>
@@ -77,26 +75,31 @@ export default {
         doneTasks: [],
         active: false,
         deletedTaskIndex: null,
+        indexCounter: 4,
         tasks: [
           {
+            id: 0,
             title: "add styles by design",
             completed: false,
             isEditing: false,
             isFavourite: false,
           },
           {
+            id: 1,
             title: "add sort by complete",
             completed: false,
             isEditing: false,
             isFavourite: false,
           },
           {
+            id: 2,
             title: "watch video about start vue3 install",
             completed: false,
             isEditing: false,
             isFavourite: false,
           },
           {
+            id: 3,
             title: "add tasks in localStorage",
             completed: false,
             isEditing: false,
@@ -137,12 +140,17 @@ export default {
         },
         deep: true,
       },
+      indexCounter(value) {
+          localStorage.indexCounter = JSON.stringify(value);
+      },
     },
 
     methods: {
       addTask() {
         if (this.newTask.trim() !== "") {
+          this.indexCounter++;
           this.tasks.push({
+            id: this.indexCounter,
             title: this.newTask,
             completed: false,
             isEditing: false,
@@ -159,14 +167,31 @@ export default {
         });
       },
 
-      setFavourite(index) {
-        const [task] = this.tasks.splice(index, 1);
+      getTaskIndexById(id) {
+        return this.tasks.findIndex((item) => item.id === id);
+      },
+
+      getDoneTaskIndexById(id) {
+        return this.doneTasks.findIndex((item) => item.id === id);
+      },
+
+      setFavourite(task) {
+        const index = this.getTaskIndexById(task.id);
+
         task.isFavourite = !task.isFavourite;
 
-        if(task.isFavourite) {
-          this.tasks.unshift(task)
+        if (task.isFavourite) {
+          const [item] = this.tasks.splice(index, 1);
+          this.tasks.unshift(item)
         } else {
-          this.tasks.push(task);
+          const lastFavourite = this.tasks.filter((el) => el.isFavourite).at(-1);
+
+          if (lastFavourite !== undefined) {
+            const lastFavouriteIndex = this.getTaskIndexById(lastFavourite.id);
+
+            const [item] = this.tasks.splice(index, 1);
+            this.tasks.splice(index < lastFavouriteIndex ? lastFavouriteIndex : lastFavouriteIndex + 1, 0, item);
+          }
         }
       },
 
@@ -193,7 +218,8 @@ export default {
         this.active = !this.active
       },
 
-      deleteDoneTask(index) {
+      deleteDoneTask(id) {
+        const index = this.getDoneTaskIndexById(id);
         this.doneTasks.splice(index, 1);
       },
 
@@ -214,23 +240,34 @@ export default {
         task.title = this.editValue;
       },
 
-      checkTaskComplete(index, isCompleted) {
-  
+      checkTaskComplete(id, isCompleted) {
         if (isCompleted) {
-          const complete = this.tasks.splice(index, 1);
-          this.doneTasks.push(...complete);
+          const taskIndex = this.getTaskIndexById(id);
+          const [completedTask] = this.tasks.splice(taskIndex, 1);
+          this.doneTasks.push(completedTask);
         } else {
-          const noComplete = this.doneTasks.splice(index, 1);
-          this.tasks.push(...noComplete);
+          const taskIndex = this.getDoneTaskIndexById(id);
+          const [noCompletedTask] = this.doneTasks.splice(taskIndex, 1);
+
+          const lastFavourite = this.tasks.filter((el) => el.isFavourite).at(-1);
+
+          if (lastFavourite !== undefined) {
+            const lastFavouriteIndex = this.getTaskIndexById(lastFavourite.id);
+
+            this.tasks.splice( lastFavouriteIndex + 1, 0, noCompletedTask);
+          } else {
+            this.tasks.unshift(noCompletedTask);
+          }
         }
       },
 
 
-      showConfirmModal(index) {
+      showConfirmModal(id) {
+        const index = this.getTaskIndexById(id);
         this.deletedTaskIndex = index;
         this.active = !this.active;
       },
     },
 
-  };
+}
 </script>

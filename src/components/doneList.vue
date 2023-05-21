@@ -25,7 +25,7 @@
       props: {
         doneTasks: Array,
         title: String,
-        completed: Boolean,
+        
       },
       methods: {
         deleteDoneTask() {

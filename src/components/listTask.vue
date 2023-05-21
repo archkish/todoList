@@ -10,22 +10,22 @@
       type="text"
       @keyup.enter="saveEditedTask"
       @input="changeTextValue"
-      v-if="isEditing"
+      v-if="task.isEditing"
       :value="noteValue"
     />
     <span
       v-else
       class="list__task"
-      :class="{ completed: completed, isEditing: isEditing }"
+      :class="{ completed: task.completed, isEditing: task.isEditing }"
     >
-    {{ title }}
+    {{ task.title }}
     </span>
 
     <div class="wrapper__btn wrapp__btn">
       <div class="wrapper">
         <button
           class="list__btn check"
-          v-if="isEditing"
+          v-if="task.isEditing"
           @click="saveEditedTask"
         ></button>
         <button
@@ -37,7 +37,7 @@
       <div>
         <button
           class="list__btn list__btn-close"
-          v-if="isEditing"
+          v-if="task.isEditing"
           @click="closeEditing"
         ></button>
         <button
@@ -48,7 +48,7 @@
       </div>
       <button
         class="list__btn list__btn-star"
-        :class="{ 'list__btn-star__active': isFavourite }"
+        :class="{ 'list__btn-star__active': task.isFavourite }"
         @click="setFavourite"
       >
         <svg
@@ -75,15 +75,17 @@ export default {
 
   props: {
     noteValue: String,
-    title: String,
-    completed: Boolean,
-    isEditing: Boolean,
-    isFavourite: Boolean,
+    task: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
   },
 
   data() {
     return {
-      textValue: ""
+      textValue: "",
     };
   },
   methods: {
