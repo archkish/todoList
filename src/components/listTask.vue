@@ -1,52 +1,50 @@
 <template>
-  <div class="wrapp">
-    <input
-      type="checkbox"
-      class="list__checkbox"
-      @change="checkTaskComplete"
-    />
-    <input
-      class="list__editing"
-      type="text"
+  <div class="list__wrapper">
+    <div @click="checkTaskComplete">
+      <v-checkbox />
+    </div>
+    <v-text-field
+      class="mr-2"
       @keyup.enter="saveEditedTask"
       @input="changeTextValue"
       v-if="task.isEditing"
       :value="noteValue"
+      variant="underlined"
     />
     <span
       v-else
       class="list__task"
       :class="{ completed: task.completed, isEditing: task.isEditing }"
     >
-    {{ task.title }}
+      {{ task.title }}
     </span>
 
-    <div class="wrapper__btn wrapp__btn">
+    <div class="wrapper__btn">
       <div class="wrapper">
-        <button
-          class="list__btn check"
+        <v-icon
+          class="list__btn check text-subtitle-1"
           v-if="task.isEditing"
           @click="saveEditedTask"
-        ></button>
-        <button
+        />
+        <v-icon
           v-else
-          class="list__btn list__btn-correction"
+          class="list__btn list__btn-correction text-subtitle-1"
           @click="editTask"
-        ></button>
+        />
       </div>
       <div>
-        <button
-          class="list__btn list__btn-close"
+        <v-icon
+          class="list__btn list__btn-close text-subtitle-2"
           v-if="task.isEditing"
           @click="closeEditing"
-        ></button>
-        <button
+        />
+        <v-icon
           v-else
-          class="list__btn"
+          class="list__btn text-subtitle-1"
           @click="showConfirmModal"
-        ></button>
+        />
       </div>
-      <button
+      <v-icon
         class="list__btn list__btn-star"
         :class="{ 'list__btn-star__active': task.isFavourite }"
         @click="setFavourite"
@@ -62,25 +60,21 @@
             d="M32 12.408l-11.056-1.607-4.944-10.018-4.944 10.018-11.056 1.607 8 7.798-1.889 11.011 9.889-5.199 9.889 5.199-1.889-11.011 8-7.798z"
           ></path>
         </svg>
-      </button>
+      </v-icon>
     </div>
   </div>
- 
-    
 </template>
 
 <script>
-
 export default {
-
   props: {
     noteValue: String,
     task: {
       type: Object,
       default() {
-        return {}
-      }
-    }
+        return {};
+      },
+    },
   },
 
   data() {
@@ -90,36 +84,30 @@ export default {
   },
   methods: {
     changeTextValue(event) {
-      this.textValue = event.target.value
-      this.$emit('noteValueChange', this.textValue)
+      this.textValue = event.target.value;
+      this.$emit("noteValueChange", this.textValue);
     },
     showConfirmModal() {
-      this.$emit('showConfirmModal')
+      this.$emit("showConfirmModal");
     },
     setFavourite() {
-      this.$emit('setFavourite')
+      this.$emit("setFavourite");
     },
     editTask() {
-      this.$emit('editTask')
+      this.$emit("editTask");
     },
     closeEditing() {
-      this.$emit('closeEditing')
+      this.$emit("closeEditing");
     },
     saveEditedTask() {
-      this.$emit('saveEditedTask')
+      this.$emit("saveEditedTask");
     },
-    
+
     checkTaskComplete() {
-      this.$emit('checkTaskComplete')
-    }
-  }
+      this.$emit("checkTaskComplete");
+    },
+  },
 };
 </script>
 
-<style lang="scss" scoped>
-.wrapp {
-  display: flex;
-  width: 100%;
-}
-
-</style>
+<style lang="scss" scoped></style>

@@ -8,52 +8,60 @@
       :active="active"
       :on-close="onConfirmClose"
     />
-    <h2 class="tasks__title">ToDo List</h2>
-    <form class="form" @submit.prevent="addTask">
-      <input
-        class="form__input"
+    <v-card-text class="text-h4 font-weight-bold pa-0">ToDo List </v-card-text>
+    <v-form class="form" @submit.prevent="addTask">
+      <v-text-field
+        class="form"
         type="text"
         v-model="newTask"
-        placeholder="Add a new task..."
+        label="Add a new task..."
+        variant="underlined"
       />
-      <button class="form__btn">Add Task</button>
-    </form>
+      <v-btn
+        class="small"
+        variant="tonal"
+        density="comfortable"
+        @click="addTask"
+      >
+        Add Task
+      </v-btn>
+    </v-form>
 
-    <section>
+    <section class="wr">
       <ul class="list">
-      <li class="list__item" v-for="task in tasks" :key="task.id">
-        <list-task
-          @setFavourite="setFavourite(task)"
-          @showConfirmModal="showConfirmModal(task.id)"
-          @editTask="editTask(task)"
-          @closeEditing="closeEditing(task)"
-          @saveEditedTask="saveEditedTask(task)"
-          @checkTaskComplete="checkTaskComplete(task.id, true)"
-          @noteValueChange="editValue = $event"
-
-          :task="task"
-          :noteValue="editValue"
-        
-        />
-      </li>
-    </ul>
+        <li class="list__item" v-for="task in tasks" :key="task.id">
+          <list-task
+            @setFavourite="setFavourite(task)"
+            @click="overlay = !overlay"
+            @showConfirmModal="showConfirmModal(task.id)"
+            @editTask="editTask(task)"
+            @closeEditing="closeEditing(task)"
+            @saveEditedTask="saveEditedTask(task)"
+            @checkTaskComplete="checkTaskComplete(task.id, true)"
+            @noteValueChange="editValue = $event"
+            :task="task"
+            :noteValue="editValue"
+          />
+        </li>
+      </ul>
     </section>
 
-    <hr class="devider" />
-    <h2 class="tasks__title tasks__title_left">Done</h2>
+    <v-divider class="border-opacity-50"></v-divider>
+    <v-card-text class="text-h5 font-weight-bold pl-0">Done</v-card-text>
 
     <section>
       <ul class="list" id="done">
-      <li class="list__item" v-for="task in doneTasks" :key="task.id">
-        <done-list
-        :doneTasks="doneTasks"
-        :title="task.title"
-        :completed="task.completed"
-        @deleteDoneTask="deleteDoneTask(task.id)"
-        @checkTaskComplete="checkTaskComplete(task.id, false)"/>
-      </li>
-    </ul>
-  </section>
+        <li class="list__item" v-for="task in doneTasks" :key="task.id">
+          <done-list
+            :doneTasks="doneTasks"
+            :title="task.title"
+            :completed="task.completed"
+            @deleteDoneTask="deleteDoneTask(task.id)"
+            @checkTaskComplete="checkTaskComplete(task.id, false)"
+          />
+        </li>
+      </ul>
+    </section>
   </div>
 </template>
 
@@ -76,6 +84,26 @@ export default {
         active: false,
         deletedTaskIndex: null,
         indexCounter: 4,
+        messages: [
+        {
+          from: 'You',
+          message: `Sure, I'll see you later.`,
+          time: '10:42am',
+          color: 'deep-purple-lighten-1',
+        },
+        {
+          from: 'John Doe',
+          message: 'Yeah, sure. Does 1:00pm work?',
+          time: '10:37am',
+          color: 'green',
+        },
+        {
+          from: 'You',
+          message: 'Did you still want to grab lunch today?',
+          time: '9:47am',
+          color: 'deep-purple-lighten-1',
+        },
+      ],
         tasks: [
           {
             id: 0,
@@ -190,7 +218,8 @@ export default {
             const lastFavouriteIndex = this.getTaskIndexById(lastFavourite.id);
 
             const [item] = this.tasks.splice(index, 1);
-            this.tasks.splice(index < lastFavouriteIndex ? lastFavouriteIndex : lastFavouriteIndex + 1, 0, item);
+
+            this.tasks.splice(index < lastFavouriteIndex ? lastFavouriteIndex : lastFavouriteIndex + 1, 0, item)
           }
         }
       },
@@ -199,7 +228,7 @@ export default {
         if(value) {
           this.active = true
         } else {
-          this.active = false 
+          this.active = false
         }
       },
 
@@ -237,6 +266,7 @@ export default {
 
       saveEditedTask(task) {
         task.isEditing = false;
+
         task.title = this.editValue;
       },
 

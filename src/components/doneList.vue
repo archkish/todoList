@@ -1,50 +1,38 @@
 <template>
-  <div class="wrapper">
-    <input
-          class="list__checkbox"
-          type="checkbox"
-          checked
-          @change="checkTaskComplete"
-        />
-        <span class="completed">{{
-          title
-        }}</span>
-        <div class="wrapper__btn">
-          <button class="list__btn" @click="deleteDoneTask"></button>
-        </div>
+  <div class="wrapper-donelist">
+    <div @click="checkTaskComplete">
+      <v-checkbox class="checked" />
+    </div>
+    <span class="completed">{{ title }}</span>
+    <div class="wrapper__btn">
+      <v-icon
+        class="list__btn text-subtitle-1"
+        @click="deleteDoneTask"
+      ></v-icon>
+    </div>
   </div>
 </template>
 
 <script>
-    export default {
-      data() {
-        return {
-
-        }
-      },
-      props: {
-        doneTasks: Array,
-        title: String,
-        
-      },
-      methods: {
-        deleteDoneTask() {
-          this.$emit('deleteDoneTask')
-        },
-        checkTaskComplete() {
-          this.$emit('checkTaskComplete')
-        },
-      }
-    }
-
+export default {
+  data() {
+    return {
+      selected: true,
+    };
+  },
+  props: {
+    doneTasks: Array,
+    title: String,
+  },
+  methods: {
+    deleteDoneTask() {
+      this.$emit("deleteDoneTask");
+    },
+    checkTaskComplete() {
+      this.$emit("checkTaskComplete");
+    },
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-  .wrapper {
-    display: flex;
-    width: 100%;
-  }
-  .completed {
-    text-decoration: line-through;
-  }
-</style>
+<style lang="scss" scoped></style>

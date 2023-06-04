@@ -1,59 +1,62 @@
 <template>
-    <div class="modal" v-show="active">
-      <div class="modal__wrapper">
-        <div class="modal__close"
-        @click="closeTask"
-        >&times;</div>
-        <div class="modal__title">Delete this task?</div>
-        <div class="modal__wrapper-btn">
-          <button 
-          class="form__btn form__btn_big"
-          @click="deleteTask">yes</button>
-          <button
-           class="form__btn form__btn_big"
-           @click="closeTask">no</button>
-        </div>
+  <div class="modal" v-show="active">
+    <div class="modal__wrapper">
+      <v-icon class="modal__close text-subtitle-2" @click="closeTask" />
+      <v-card-text
+        class="modal__title text-h5 font-weight-medium text-uppercase pa-0"
+        >Delete this task?
+      </v-card-text>
+      <div class="modal__wrapper-btn">
+        <v-btn
+          class="v-btn big"
+          variant="tonal"
+          density="comfortable"
+          @click="deleteTask"
+        >
+          yes
+        </v-btn>
+        <v-btn
+          class="v-btn big"
+          variant="tonal"
+          density="comfortable"
+          @click="closeTask"
+        >
+          no
+        </v-btn>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
+export default {
+  data() {
+    return {};
+  },
+  props: {
+    active: Boolean,
+    onClose: Function,
+  },
+  methods: {
+    close() {
+      this.onClose(false);
+    },
 
-    export default {
-        data () {
-            return {  
-            }
-        },
-        props: {
-            active: Boolean,
-            onClose: Function,
-     
-        },
-        methods: {
-            close() {
-                this.onClose(false)
-            },
+    deleteTask() {
+      this.$emit("deleteTask");
+      this.close();
+    },
 
+    closeTask() {
+      this.$emit("closeTask");
+      this.close();
+    },
 
-            deleteTask() {
-                this.$emit('deleteTask')
-                this.close()
-            },
-
-            closeTask() {
-                this.$emit('closeTask')
-                this.close()
-
-            },
-
-            classToggle() {
-                this.$emit('classToggle')
-            },
-        },
-    
-    }
+    classToggle() {
+      this.$emit("classToggle");
+    },
+  },
+};
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
